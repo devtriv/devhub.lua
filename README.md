@@ -1,2 +1,0 @@
-# devhub.lua
-Hub
