@@ -1,7 +1,12 @@
 --[[
     JHI HUB - AIMBOT, AIM ASSIST & ESP MINI HUB
     Créditos: by pablo🥋
-    Agora com botão "Hide/Show" arrastável na lateral esquerda.
+    - Hub elegante, minimalista e profissional para Roblox (PC e celular).
+    - Toggle AIMBOT, AIM ASSIST e ESP independentes, tudo draggable.
+    - ESP (amarelo) só em inimigos (time diferente).
+    - AIMBOT mira SEMPRE no inimigo mais próximo (distância 3D, ignora visibilidade).
+    - AIM ASSIST suaviza a mira para o inimigo mais próximo (distância 3D, ignora visibilidade).
+    - Coloque como LocalScript em StarterPlayerScripts.
 --]]
 
 local Players = game:GetService("Players")
@@ -9,26 +14,40 @@ local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
 
--- Blur de fundo
+-- Tela escura translúcida (blur de fundo)
 local blur = Instance.new("BlurEffect")
 blur.Size = 6
 blur.Parent = game.Lighting
 
--- GUI principal
+-- ScreenGui elegante
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "JHIHub"
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
 screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
--- Frame Hub
+-- Sombra moderna
+local shadow = Instance.new("ImageLabel")
+shadow.Name = "HubShadow"
+shadow.Size = UDim2.new(0, 260, 0, 170)
+shadow.Position = UDim2.new(0, 16, 1, -190)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageTransparency = 0.83
+shadow.Parent = screenGui
+shadow.ZIndex = 0
+
+-- Hub frame elegante e MENOR (cor alterada para roxo escuro)
 local hubFrame = Instance.new("Frame")
 hubFrame.Size = UDim2.new(0, 240, 0, 140)
 hubFrame.Position = UDim2.new(0, 30, 1, -160)
-hubFrame.BackgroundColor3 = Color3.fromRGB(36, 22, 50)
+hubFrame.BackgroundColor3 = Color3.fromRGB(36, 22, 50) -- Roxo escuro elegante
+hubFrame.BackgroundTransparency = 0.09
+hubFrame.BorderSizePixel = 0
 hubFrame.Active = true
 hubFrame.Draggable = true
 hubFrame.Parent = screenGui
+hubFrame.ZIndex = 1
 
 local uiCorner = Instance.new("UICorner")
 uiCorner.CornerRadius = UDim.new(0, 16)
@@ -40,9 +59,10 @@ uiStroke.Thickness = 2.5
 uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 uiStroke.Parent = hubFrame
 
--- Título
+-- Título sofisticado
 local hubTitle = Instance.new("TextLabel")
-hubTitle.Size = UDim2.new(1, 0, 0, 28)
+hubTitle.Size = UDim2.new(1, 0, 0, 36)
+hubTitle.Position = UDim2.new(0, 0, 0, 0)
 hubTitle.BackgroundTransparency = 1
 hubTitle.Text = "JHI HUB"
 hubTitle.Font = Enum.Font.FredokaOne
@@ -50,44 +70,61 @@ hubTitle.TextScaled = true
 hubTitle.TextColor3 = Color3.fromRGB(180, 135, 255)
 hubTitle.TextStrokeTransparency = 0.74
 hubTitle.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+hubTitle.ZIndex = 2
 hubTitle.Parent = hubFrame
 
 -- Linha decorativa
 local decoLine = Instance.new("Frame")
 decoLine.Size = UDim2.new(0.95, 0, 0, 2)
-decoLine.Position = UDim2.new(0.025, 0, 0, 28)
+decoLine.Position = UDim2.new(0.025, 0, 0, 32)
 decoLine.BackgroundColor3 = Color3.fromRGB(155, 102, 255)
 decoLine.BorderSizePixel = 0
+decoLine.ZIndex = 2
 decoLine.Parent = hubFrame
 
--- Função botão padrão
-local function createButton(name, posX, colorMain, colorOn)
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1/3, -12, 0, 32)
-    button.Position = UDim2.new(posX, 8*(posX==0 and 1 or 0), 0, 40)
-    button.Text = name
-    button.BackgroundColor3 = colorMain
-    button.Font = Enum.Font.GothamBold
-    button.TextScaled = true
-    button.TextColor3 = Color3.fromRGB(220, 234, 255)
-    button.AutoButtonColor = false
-    button.BorderSizePixel = 0
-    button.Parent = hubFrame
+-- Label descrição discreta
+local descLabel = Instance.new("TextLabel")
+descLabel.Size = UDim2.new(1, -36, 0, 14)
+descLabel.Position = UDim2.new(0, 18, 0, 38)
+descLabel.BackgroundTransparency = 1
+descLabel.Font = Enum.Font.Gotham
+descLabel.Text = "Aimbot, Aim Assist & ESP"
+descLabel.TextScaled = true
+descLabel.TextColor3 = Color3.fromRGB(210, 190, 255)
+descLabel.TextTransparency = 0.16
+descLabel.ZIndex = 2
+descLabel.Parent = hubFrame
+
+-- Função botão elegante
+local function elegantButton(label, xOff, colorMain, colorOn)
+    local bt = Instance.new("TextButton")
+    bt.Size = UDim2.new(1/3, -12, 0, 32)
+    bt.Position = UDim2.new(xOff, 8*(xOff==0 and 1 or 0), 0, 62)
+    bt.Text = label
+    bt.BackgroundColor3 = colorMain
+    bt.Font = Enum.Font.GothamBold
+    bt.TextScaled = true
+    bt.TextColor3 = Color3.fromRGB(220, 234, 255)
+    bt.AutoButtonColor = false
+    bt.BorderSizePixel = 0
+    bt.Parent = hubFrame
+    bt.Active = true
+    bt.ZIndex = 3
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = button
+    corner.Parent = bt
     local stroke = Instance.new("UIStroke")
     stroke.Thickness = 1.2
     stroke.Color = Color3.fromRGB(110, 60, 150)
-    stroke.Parent = button
-    return button, stroke, colorMain, colorOn
+    stroke.Parent = bt
+    return bt, stroke, colorMain, colorOn
 end
 
-local aimButton, aimStroke, aimColor, aimColorOn = createButton("AIMBOT OFF", 0, Color3.fromRGB(40, 25, 58), Color3.fromRGB(44, 160, 100))
-local assistButton, assistStroke, assistColor, assistColorOn = createButton("AIM ASSIST OFF", 1/3, Color3.fromRGB(40, 25, 58), Color3.fromRGB(155, 102, 255))
-local espButton, espStroke, espColor, espColorOn = createButton("ESP OFF", 2/3, Color3.fromRGB(40, 25, 58), Color3.fromRGB(230, 200, 50))
+local aimButton, aimStroke, aimColor, aimColorOn = elegantButton("AIMBOT OFF", 0, Color3.fromRGB(40, 25, 58), Color3.fromRGB(44, 160, 100))
+local assistButton, assistStroke, assistColor, assistColorOn = elegantButton("AIM ASSIST OFF", 1/3, Color3.fromRGB(40, 25, 58), Color3.fromRGB(155, 102, 255))
+local espButton, espStroke, espColor, espColorOn = elegantButton("ESP OFF", 2/3, Color3.fromRGB(40, 25, 58), Color3.fromRGB(230, 200, 50))
 
--- Créditos
+-- Créditos sofisticado
 local credits = Instance.new("TextLabel")
 credits.Size = UDim2.new(1, -14, 0, 14)
 credits.Position = UDim2.new(0, 7, 1, -20)
@@ -96,159 +133,196 @@ credits.Text = "by pablo🥋"
 credits.Font = Enum.Font.GothamBold
 credits.TextScaled = true
 credits.TextColor3 = Color3.fromRGB(180, 135, 255)
+credits.TextTransparency = 0.20
+credits.ZIndex = 3
 credits.Parent = hubFrame
 
--- Estados
+-- Estado dos toggles
 local aimActive = false
 local assistActive = false
 local espActive = false
 
-local function updateAim()
-    aimButton.Text = aimActive and "AIMBOT ON" or "AIMBOT OFF"
-    aimButton.BackgroundColor3 = aimActive and aimColorOn or aimColor
-    aimStroke.Color = aimActive and aimColorOn or Color3.fromRGB(110, 60, 150)
+local function updateAimButton()
+    if aimActive then
+        aimButton.Text = "AIMBOT ON"
+        aimButton.BackgroundColor3 = aimColorOn
+        aimButton.TextColor3 = Color3.fromRGB(230,255,230)
+        aimStroke.Color = aimColorOn
+    else
+        aimButton.Text = "AIMBOT OFF"
+        aimButton.BackgroundColor3 = aimColor
+        aimButton.TextColor3 = Color3.fromRGB(220,234,255)
+        aimStroke.Color = Color3.fromRGB(110, 60, 150)
+    end
 end
 
-local function updateAssist()
-    assistButton.Text = assistActive and "AIM ASSIST ON" or "AIM ASSIST OFF"
-    assistButton.BackgroundColor3 = assistActive and assistColorOn or assistColor
-    assistStroke.Color = assistActive and assistColorOn or Color3.fromRGB(110, 60, 150)
+local function updateAssistButton()
+    if assistActive then
+        assistButton.Text = "AIM ASSIST ON"
+        assistButton.BackgroundColor3 = assistColorOn
+        assistButton.TextColor3 = Color3.fromRGB(235, 230, 255)
+        assistStroke.Color = assistColorOn
+    else
+        assistButton.Text = "AIM ASSIST OFF"
+        assistButton.BackgroundColor3 = assistColor
+        assistButton.TextColor3 = Color3.fromRGB(220,234,255)
+        assistStroke.Color = Color3.fromRGB(110, 60, 150)
+    end
 end
 
-local function updateESP()
-    espButton.Text = espActive and "ESP ON" or "ESP OFF"
-    espButton.BackgroundColor3 = espActive and espColorOn or espColor
-    espStroke.Color = espActive and espColorOn or Color3.fromRGB(110, 60, 150)
+local function updateESPButton()
+    if espActive then
+        espButton.Text = "ESP ON"
+        espButton.BackgroundColor3 = espColorOn
+        espButton.TextColor3 = Color3.fromRGB(70, 65, 10)
+        espStroke.Color = Color3.fromRGB(230, 200, 50)
+    else
+        espButton.Text = "ESP OFF"
+        espButton.BackgroundColor3 = espColor
+        espButton.TextColor3 = Color3.fromRGB(220,234,255)
+        espStroke.Color = Color3.fromRGB(110, 60, 150)
+    end
 end
 
--- ESP
-local espFolder = Instance.new("Folder", screenGui)
-espFolder.Name = "ESP_FOLDER"
+-- ESP: Aparece apenas em jogadores de time diferente
+local espFolder = Instance.new("Folder")
+espFolder.Name = "ESPFOLDER"
+espFolder.Parent = screenGui
+
 local espEnemies = {}
 
 function ClearESP()
-    for _, v in ipairs(espFolder:GetChildren()) do v:Destroy() end
+    for _, v in ipairs(espFolder:GetChildren()) do
+        v:Destroy()
+    end
     espEnemies = {}
 end
 
 function IsEnemy(player)
-    return player.Team ~= LocalPlayer.Team
+    local myTeam = LocalPlayer.Team
+    return player.Team ~= myTeam
 end
 
-function CreateESP(player)
+function CreateESPBox(player)
+    if player == LocalPlayer then return end
+    if not player.Character then return end
+    local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
     local box = Instance.new("Frame")
     box.Name = "ESP_" .. player.Name
     box.AnchorPoint = Vector2.new(0.5, 0.5)
+    box.Size = UDim2.new(0, 40, 0, 80)
     box.BackgroundTransparency = 1
     box.BorderSizePixel = 0
     box.ZIndex = 10
     box.Parent = espFolder
+
     local outline = Instance.new("UIStroke")
     outline.Color = Color3.fromRGB(255, 235, 66)
     outline.Thickness = 2
     outline.Parent = box
+
     return box
 end
 
 function UpdateESP()
     ClearESP()
-    for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and IsEnemy(p) and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-            table.insert(espEnemies, p)
-        end
-    end
-end
-
-function getClosestHead()
-    local closest = nil
-    local minDist = math.huge
-    local myRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not myRoot then return end
-    for _, p in ipairs(espEnemies) do
-        local head = p.Character and p.Character:FindFirstChild("Head")
-        local root = p.Character and p.Character:FindFirstChild("HumanoidRootPart")
-        if head and root then
-            local dist = (myRoot.Position - root.Position).Magnitude
-            if dist < minDist then
-                minDist = dist
-                closest = head
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and IsEnemy(player) and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+            local hrp = player.Character.HumanoidRootPart
+            local head = player.Character:FindFirstChild("Head")
+            if humanoid and humanoid.Health > 0 then
+                table.insert(espEnemies, player)
+                if espActive and head and hrp then
+                    local pos, visible = Camera:WorldToViewportPoint(hrp.Position)
+                    if visible then
+                        local topY = Camera:WorldToViewportPoint(head.Position).Y
+                        local bottomY = Camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, humanoid.HipHeight, 0)).Y
+                        local height = math.abs(topY - bottomY)
+                        local width = height / 2
+                        local box = CreateESPBox(player)
+                        if box then
+                            box.Size = UDim2.new(0, width, 0, height)
+                            box.Position = UDim2.new(0, pos.X, 0, (topY + bottomY)/2)
+                            box.Visible = true
+                        end
+                    end
+                end
             end
         end
     end
-    return closest
 end
 
-local assistStrength = 0.23
+local function getClosestEnemy3D()
+    local closestHead = nil
+    local shortestDistance = math.huge
+    local myChar = LocalPlayer.Character
+    local myRoot = myChar and myChar:FindFirstChild("HumanoidRootPart")
+    if not myRoot then return nil end
 
-function aimAssistStep(strength)
-    local target = getClosestHead()
-    if not target then return end
+    for _, player in ipairs(espEnemies) do
+        if player.Character and player.Character:FindFirstChild("Head") and player.Character:FindFirstChild("HumanoidRootPart") then
+            local head = player.Character.Head
+            local enemyRoot = player.Character.HumanoidRootPart
+            local distance = (myRoot.Position - enemyRoot.Position).Magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                closestHead = head
+            end
+        end
+    end
+    return closestHead
+end
+
+-- AIM ASSIST aprimorado: força menor e ajuste angular elegante
+local aimAssistStrength = 0.17 -- Mais fraco que antes, suave
+local aimAssistMaxAngle = math.rad(100) -- ângulo máximo em relação à mira
+
+local function aimAssistStep(strength)
+    local targetHead = getClosestEnemy3D()
+    if not targetHead then return end
     local camPos = Camera.CFrame.Position
-    local dir = (target.Position - camPos).Unit
-    local smoothDir = Camera.CFrame.LookVector:Lerp(dir, strength)
-    Camera.CFrame = CFrame.new(camPos, camPos + smoothDir)
+    local camLook = Camera.CFrame.LookVector
+    local dir = (targetHead.Position - camPos).Unit
+    local dot = camLook:Dot(dir)
+    local angle = math.acos(math.clamp(dot, -1, 1))
+    if angle < aimAssistMaxAngle then
+        local smoothDir = camLook:Lerp(dir, strength)
+        Camera.CFrame = CFrame.new(camPos, camPos + smoothDir)
+    end
 end
 
 aimButton.MouseButton1Click:Connect(function()
     aimActive = not aimActive
     if aimActive then assistActive = false end
-    updateAim()
-    updateAssist()
+    updateAimButton()
+    updateAssistButton()
 end)
-
 assistButton.MouseButton1Click:Connect(function()
     assistActive = not assistActive
     if assistActive then aimActive = false end
-    updateAim()
-    updateAssist()
+    updateAimButton()
+    updateAssistButton()
 end)
-
 espButton.MouseButton1Click:Connect(function()
     espActive = not espActive
-    updateESP()
+    updateESPButton()
 end)
 
-updateAim()
-updateAssist()
-updateESP()
+updateAimButton()
+updateAssistButton()
+updateESPButton()
 
 RunService.RenderStepped:Connect(function()
     UpdateESP()
     if aimActive then
-        local target = getClosestHead()
-        if target then
-            Camera.CFrame = CFrame.new(Camera.CFrame.Position, target.Position)
+        local targetHead = getClosestEnemy3D()
+        if targetHead then
+            Camera.CFrame = CFrame.new(Camera.CFrame.Position, targetHead.Position)
         end
     elseif assistActive then
-        aimAssistStep(assistStrength)
+        aimAssistStep(aimAssistStrength)
     end
-end)
-
--- Botão Hide/Show - Arrastável na lateral esquerda (meio da tela)
-local toggleButton = Instance.new("TextButton")
-toggleButton.Size = UDim2.new(0, 80, 0, 30)
-toggleButton.Position = UDim2.new(0, 10, 0.5, -15)
-toggleButton.BackgroundColor3 = Color3.fromRGB(60, 40, 80)
-toggleButton.Font = Enum.Font.GothamBold
-toggleButton.Text = "Hide"
-toggleButton.TextScaled = true
-toggleButton.TextColor3 = Color3.fromRGB(230, 230, 255)
-toggleButton.Parent = screenGui
-
-local corner = Instance.new("UICorner")
-corner.Parent = toggleButton
-
-toggleButton.Active = true
-toggleButton.Draggable = true
-
-local hidden = false
-toggleButton.MouseButton1Click:Connect(function()
-    if hidden then
-        hubFrame.Visible = true
-        toggleButton.Text = "Hide"
-    else
-        hubFrame.Visible = false
-        toggleButton.Text = "Show"
-    end
-    hidden = not hidden
 end)
